@@ -97,7 +97,7 @@ void Tests::TestContainer()
 		cout << endl ;
 	}
 
-	cout << "\n\n\n" ;
+	SKIP();
 
 	// operator=
 	cout << "Operator= :\n" ;
@@ -116,7 +116,7 @@ void Tests::TestContainer()
 		SHOW_IntContainer( numbers2 );
 	}
 
-	cout << "\n\n\n" ;
+	SKIP();
 
 	// PushFront
 	cout << "PushFront :\n" ;
@@ -132,7 +132,7 @@ void Tests::TestContainer()
 		cout << "Size : " << numbers.GetSize() << endl ;
 	}
 
-	cout << "\n\n\n" ;
+	SKIP();
 
 	// PushBack
 	cout << "PushBack :\n" ;
@@ -148,8 +148,7 @@ void Tests::TestContainer()
 		cout << "Size : " << numbers.GetSize() << endl ;
 	}
 
-	cout << "\n\n\n" ;
-
+	SKIP();
 	// RemoveFirst
 	cout << "RemoveFirst :\n " ;
 	{
@@ -181,7 +180,7 @@ void Tests::TestContainer()
 		}
 	}
 
-	cout << "\n\n\n" ;
+	SKIP();
 
 	// RemoveLast
 	cout << "RemoveLast :\n" ;
@@ -214,8 +213,7 @@ void Tests::TestContainer()
 		}
 	}
 
-	cout << "\n\n\n" ;
-
+	SKIP();
 	// Clear
 	cout << "Clear :\n" ;
 	{
@@ -231,7 +229,7 @@ void Tests::TestContainer()
 		SHOW_IntContainer( numbers );
 	}
 
-	cout << "\n\n\n" ;
+	SKIP();
 
 	// GetFirst
 	cout << "GetFirst :\n" ;
@@ -257,7 +255,7 @@ void Tests::TestContainer()
 		}
 	}
 
-	cout << "\n\n\n" ;
+	SKIP();
 
 	// GetLast
 	cout << "GetLast :\n" ;
@@ -283,7 +281,7 @@ void Tests::TestContainer()
 		}
 	}
 
-	cout << "\n\n\n" ;
+	SKIP();
 
 	// GetSize
 	cout << "GetSize :\n" ;
@@ -306,7 +304,7 @@ void Tests::TestContainer()
 		cout << "Size : " << numbers.GetSize() << endl ;
 	}
 
-	cout << "\n\n\n" ;
+	SKIP();
 
 	// IsEmpty
 	cout << "IsEmpty :\n" ;
@@ -352,6 +350,20 @@ void Tests::TestContainer()
 		SHOW_IntContainer( numbers3 );
 		SHOW_ExpressionValue( numbers1 == numbers2 );
 		SHOW_ExpressionValue( numbers1 == numbers3 );
+	}
+
+	SKIP();
+
+	// Test with empty container
+	cout << "Test with empty container :\n" ;
+	{
+		Container< int > empty;
+		Container< int > copy = empty;
+		SHOW_IntContainer( empty );
+		SHOW_IntContainer( copy );
+		SHOW_ExpressionValue( empty == copy );
+		empty.Clear();
+		SHOW_IntContainer( empty );
 	}
 }
 

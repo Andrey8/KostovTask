@@ -293,7 +293,18 @@ bool Polyline::IsClosed() const
 
 bool Polyline::operator ==( Polyline const & other ) const
 {
-	return ( m_vertices == other.m_vertices || m_vertices == GetInvertedContainer( other.m_vertices ) );
+	if ( IsClosed() && other.IsClosed() )
+	{
+		return ( CircularShift( m_vertices, other.m_vertices ) || CircularShift( GetInvertedContainer( m_vertices ), other.m_vertices ) );
+	}
+	else if ( !IsClosed() && !other.IsClosed() )
+	{
+		return ( m_vertices == other.m_vertices || m_vertices == GetInvertedContainer( other.m_vertices ) );
+	}
+	else
+	{
+		return false;
+	}
 }
 
 std::ostream & operator<<( std::ostream & os, Polyline const & pol )
@@ -480,8 +491,8 @@ Polygon::Polygon( Container< Point > const & vertices )
 	for ( uint16_t i = 0; i < vertices.GetSize(); ++i )
 	{
 		if ( VerticesAreCollinear( GetVertex( vertices, i - 1 ),
-									GetVertex( vertices, i ),
-									GetVertex( vertices, i + 1 ) ) )
+								   GetVertex( vertices, i ),
+								   GetVertex( vertices, i + 1 ) ) )
 		{
 			throw Exception( "Polygon creation : three consecutive vertices are collinear." );
 		}
@@ -539,37 +550,6 @@ bool Polygon::IsTriangle() const
 bool Polygon::operator ==( Polygon const & other ) const
 {
 	return ( CircularShift( m_vertices, other.m_vertices ) || CircularShift( GetInvertedContainer( m_vertices ), other.m_vertices ) );
-}
-
-void Polygon::MoveLastItemToBegin( Container< Point > & points )
-{
-	if ( points.IsEmpty() )
-	{
-		throw Exception( "..." );
-	}
-
-	points.PushFront( points.GetLast() );
-	points.RemoveLast();
-}
-
-bool Polygon::CircularShift( Container< Point > const & c1, Container< Point > const & c2 )
-{
-	if ( c1.GetSize() != c2.GetSize() )
-	{
-		return false;
-	}
-
-	Container< Point > copy1 = c1;
-	for ( uint16_t i = 0; i < c1.GetSize(); ++i )
-	{
-		MoveLastItemToBegin( copy1 );
-		if ( copy1 == c2 )
-		{
-			return true;
-		}
-	}
-
-	return false;
 }
 
 uint16_t Polygon::GetRemainder( int a, uint16_t b )

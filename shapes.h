@@ -211,8 +211,6 @@ private:
 	Container< Point > m_vertices;
 	Container< LineSegment > m_edges;
 
-	static void MoveLastItemToBegin( Container< Point > & points );
-	static bool CircularShift( Container< Point > const & c1, Container< Point > const & c2 );
 	static uint16_t GetRemainder( int a, uint16_t b );
 	static LineSegment GetLineSegment( Container< Point > const & vertices, int index );
 	static Point const & GetVertex( Container< Point > const & vertices, int index );

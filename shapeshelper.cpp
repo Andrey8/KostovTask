@@ -266,6 +266,37 @@ double ShapesHelper::GetDistance( Point const & p1, Point const & p2 )
 					  ( p1.Y() - p2.Y() ) * ( p1.Y() - p2.Y() ) );
 }
 
+void ShapesHelper::MoveLastItemToBegin( Container< Point > & points )
+{
+	if ( points.IsEmpty() )
+	{
+		throw Exception( "..." );
+	}
+
+	points.PushFront( points.GetLast() );
+	points.RemoveLast();
+}
+
+bool ShapesHelper::CircularShift( Container< Point > const & c1, Container< Point > const & c2 )
+{
+	if ( c1.GetSize() != c2.GetSize() )
+	{
+		return false;
+	}
+
+	Container< Point > copy1 = c1;
+	for ( uint16_t i = 0; i < c1.GetSize(); ++i )
+	{
+		MoveLastItemToBegin( copy1 );
+		if ( copy1 == c2 )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 Container< Point > ShapesHelper::GetInvertedContainer( Container< Point > const & points )
 {
 	Container< Point > result;

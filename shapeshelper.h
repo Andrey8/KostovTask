@@ -93,6 +93,8 @@ namespace ShapesHelper
 	};
 
 	double GetDistance( Point const &, Point const & );
+	void MoveLastItemToBegin( Container< Point > & points );
+	bool CircularShift( Container< Point > const & c1, Container< Point > const & c2 );
 	Container< Point > GetInvertedContainer( Container< Point > const & points );
 
 	Shape const * GetShape( ShapeType type );
