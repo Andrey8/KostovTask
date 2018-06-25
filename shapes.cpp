@@ -1,15 +1,12 @@
 #include "shapes.h"
 #include "shapeshelper.h"
 
-using std::cout;
-using std::endl;
-
-using namespace ShapesHelper;
+using Vector = ShapesHelper::Vector;
+using CircleDirection = ShapesHelper::CircleDirection;
 
 
 
 uint16_t Shape::sm_count = 0;
-
 
 
 
@@ -19,26 +16,24 @@ Point::Point( Point const & other )
 	: Named( "Point" ),
 	  m_x( other.m_x ),
 	  m_y( other.m_y )
-{
-	IncrementCount();
-}
+{}
 
 std::ostream & operator<<( std::ostream & os, Point const & point )
 {
-	os << endl;
+	os << std::endl;
 
 	os << point.GetName() << " :\n"
 	   << "\tcoordinates : ("
 	   << point.m_x << ", " << point.m_y << ")\n";
 
-	os << endl;
+	os << std::endl;
 
 	return os;
 }
 
 void Point::PrintInfo() const
 {
-	cout << *this ;
+	std::cout << *this ;
 }
 
 bool Point::IsInsideRect( Rect const & rect ) const
@@ -71,36 +66,32 @@ Circle::Circle( Point const & center, double radius )
 	{
 		throw Exception( "Circle creation : radius = 0 is impossible." );
 	}
-
-	IncrementCount();
 }
 
 Circle::Circle( Circle const & other )
 	: Named( "Circle" ),
 	  m_center( other.m_center ),
 	  m_radius( other.m_radius )
-{
-	IncrementCount();
-}
+{}
 
 std::ostream & operator<<( std::ostream & os, Circle const & circle )
 {
-	os << endl;
+	os << std::endl;
 
 	os << circle.GetName() << " :\n"
 	   << "\tcenter : "
 	   << "O(" << circle.GetCenter().X() << ", " << circle.GetCenter().Y() << ")\n"
-	   << "\tradius : " << circle.GetRadius() << endl
-	   << "\tarea : " << circle.GetArea() << endl;
+	   << "\tradius : " << circle.GetRadius() << std::endl
+	   << "\tarea : " << circle.GetArea() << std::endl;
 
-	os << endl;
+	os << std::endl;
 
 	return os;
 }
 
 void Circle::PrintInfo() const
 {
-	cout << *this;
+	std::cout << *this;
 }
 
 bool Circle::operator==( Circle const & other ) const
@@ -121,43 +112,35 @@ bool Circle::operator==( Circle const & other ) const
 
 std::ostream & operator<<( std::ostream & os, Rect const & rect )
 {
-	os << endl;
+	os << std::endl;
 
 	os << rect.GetName() << " :\n"
 	   << "\tvertices :\n"
-	   << "\t\tA(" << rect.GetTopLeft().X() << ", " << rect.GetTopLeft().Y() << ")\n"
-	   << "\t\tB(" << rect.GetTopRight().X() << ", " << rect.GetTopRight().Y() << ")\n"
-	   << "\t\tC(" << rect.GetBottomRight().X() << ", " << rect.GetBottomRight().Y() << ")\n"
-	   << "\t\tD(" << rect.GetBottomLeft().X() << ", " << rect.GetBottomLeft().Y() << ")\n"
-	   << "\twidth : " << rect.GetWidth() << endl
-	   << "\theight :" << rect.GetHeight() << endl
-	   << "\tarea : " << rect.GetArea() << endl;
+	   << "\t\tA(" << rect.GetTopLeftCorner().X() << ", " << rect.GetTopLeftCorner().Y() << ")\n"
+	   << "\t\tB(" << rect.GetTopRightCorner().X() << ", " << rect.GetTopRightCorner().Y() << ")\n"
+	   << "\t\tC(" << rect.GetBottomRightCorner().X() << ", " << rect.GetBottomRightCorner().Y() << ")\n"
+	   << "\t\tD(" << rect.GetBottomLeftCorner().X() << ", " << rect.GetBottomLeftCorner().Y() << ")\n"
+	   << "\twidth : " << rect.GetWidth() << std::endl
+	   << "\theight :" << rect.GetHeight() << std::endl
+	   << "\tarea : " << rect.GetArea() << std::endl;
 	if ( rect.IsSquare() )
 	{
-		cout << "\tIt is square.\n" ;
+		std::cout << "\tIt is square.\n" ;
 	}
 
-	os << endl;
+	os << std::endl;
 
 	return os;
 }
 
 Rect::Rect( Point const & topLeft, Point const & bottomRight )
 	: Named( "Rect" ),
-	  m_center( Point( 0, 0 ) )
+	  m_center( Point( ( topLeft.X() + bottomRight.X() ) / 2, ( topLeft.Y() + bottomRight.Y() ) / 2 ) ),
+	  m_width( bottomRight.X() - topLeft.X() ),
+	  m_height( topLeft.Y() - bottomRight.Y() )
 {
-	if ( topLeft.X() < bottomRight.X() &&
-		 topLeft.Y() > bottomRight.Y() )
-	{
-		double x = ( topLeft.X() + bottomRight.X() ) / 2;
-		double y = ( topLeft.Y() + bottomRight.Y() ) / 2;
-		m_center.SetCoords( x, y );
-		m_width = bottomRight.X() - topLeft.X();
-		m_height = topLeft.Y() - bottomRight.Y();
-
-		IncrementCount();
-	}
-	else
+	if ( topLeft.X() >= bottomRight.X() &&
+		 topLeft.Y() <= bottomRight.Y() )
 	{
 		throw Exception( "Rect creation : no matching in top left and bottom right corners." );
 	}
@@ -173,8 +156,6 @@ Rect::Rect( Point const & center, double width, double height )
 	{
 		throw Exception( "Rect creation : width = 0 or height = 0 is impossible." );
 	}
-
-	IncrementCount();
 }
 
 Rect::Rect( Rect const & other )
@@ -182,39 +163,37 @@ Rect::Rect( Rect const & other )
 	  m_center( other.m_center ),
 	  m_width( other.m_width ),
 	  m_height( other.m_height )
-{
-	IncrementCount();
-}
+{}
 
-Point Rect::GetBottomLeft() const
+Point Rect::GetBottomLeftCorner() const
 {
 	return Point( m_center.X() - m_width / 2, m_center.Y() - m_height / 2 );
 }
 
-Point Rect::GetTopRight() const
+Point Rect::GetTopRightCorner() const
 {
 	return Point( m_center.X() + m_width / 2, m_center.Y() + m_height / 2 );
 }
 
-Point Rect::GetBottomRight() const
+Point Rect::GetBottomRightCorner() const
 {
 	return Point( m_center.X() + m_width / 2, m_center.Y() - m_height / 2 );
 }
 
-Point Rect::GetTopLeft() const
+Point Rect::GetTopLeftCorner() const
 {
 	return Point( m_center.X() - m_width / 2, m_center.Y() + m_height / 2 );
 }
 
 void Rect::PrintInfo() const
 {
-	cout << *this;
+	std::cout << *this;
 }
 
 bool Rect::Contains( Point const & point ) const
 {
-	if ( point.X() >= GetLeftBorder() && point.X() <= GetRightBorder() &&
-		 point.Y() >= GetBottomBorder() && point.Y() <= GetTopBorder() )
+	if ( point.X() >= GetTopLeftCorner().X() && point.X() <= GetTopRightCorner().X() &&
+		 point.Y() >= GetBottomLeftCorner().Y() && point.Y() <= GetTopLeftCorner().Y() )
 	{
 		return true;
 	}
@@ -247,23 +226,23 @@ bool Rect::operator==( Rect const & other ) const
 
 std::ostream & operator<<( std::ostream & os, Square const & square )
 {
-	os << endl ;
+	os << std::endl ;
 	os << square.GetName() << " :\n"
 	   << "\tvertices :\n"
-	   << "\t\tA(" << square.GetTopLeft().X() << ", " << square.GetTopLeft().Y() << ")\n"
-	   << "\t\tB(" << square.GetTopRight().X() << ", " << square.GetTopRight().Y() << ")\n"
-	   << "\t\tC(" << square.GetBottomRight().X() << ", " << square.GetBottomRight().Y() << ")\n"
-	   << "\t\tD(" << square.GetBottomLeft().X() << ", " << square.GetBottomLeft().Y() << ")\n"
-	   << "\tedge : " << square.GetEdge() << endl
-	   << "\tarea : " << square.GetArea() << endl ;
-	os << endl;
+	   << "\t\tA(" << square.GetTopLeftCorner().X() << ", " << square.GetTopLeftCorner().Y() << ")\n"
+	   << "\t\tB(" << square.GetTopRightCorner().X() << ", " << square.GetTopRightCorner().Y() << ")\n"
+	   << "\t\tC(" << square.GetBottomRightCorner().X() << ", " << square.GetBottomRightCorner().Y() << ")\n"
+	   << "\t\tD(" << square.GetBottomLeftCorner().X() << ", " << square.GetBottomLeftCorner().Y() << ")\n"
+	   << "\tedge : " << square.GetEdge() << std::endl
+	   << "\tarea : " << square.GetArea() << std::endl ;
+	os << std::endl;
 
 	return os;
 }
 
 void Square::PrintInfo() const
 {
-	cout << *this ;
+	std::cout << *this ;
 }
 
 
@@ -275,8 +254,6 @@ Polyline::Polyline( Point const & begin )
 	  m_isClosed( false )
 {
 	m_vertices.PushBack( begin );
-
-	IncrementCount();
 }
 
 bool Polyline::IsClosed() const
@@ -295,11 +272,11 @@ bool Polyline::operator ==( Polyline const & other ) const
 {
 	if ( IsClosed() && other.IsClosed() )
 	{
-		return ( CircularShift( m_vertices, other.m_vertices ) || CircularShift( GetInvertedContainer( m_vertices ), other.m_vertices ) );
+		return ( ShapesHelper::IsCircularShift( m_vertices, other.m_vertices ) || ShapesHelper::IsCircularShift( ShapesHelper::GetInvertedContainer( m_vertices ), other.m_vertices ) );
 	}
 	else if ( !IsClosed() && !other.IsClosed() )
 	{
-		return ( m_vertices == other.m_vertices || m_vertices == GetInvertedContainer( other.m_vertices ) );
+		return ( m_vertices == other.m_vertices || m_vertices == ShapesHelper::GetInvertedContainer( other.m_vertices ) );
 	}
 	else
 	{
@@ -311,7 +288,7 @@ std::ostream & operator<<( std::ostream & os, Polyline const & pol )
 {
 	std::string const name = pol.GetName();
 
-	os << endl;
+	os << std::endl;
 
 	if ( pol.m_vertices.GetSize() == 1 )
 	{
@@ -319,15 +296,15 @@ std::ostream & operator<<( std::ostream & os, Polyline const & pol )
 
 		os << name << " :\n"
 		   << "\tIt has only one vertex : "
-		   << "(" << v.X() << ", " << v.Y() << ")" << endl ;
+		   << "(" << v.X() << ", " << v.Y() << ")" << std::endl ;
 
 		return os;
 	}
 
 	os << name << " :\n"
-	   << "\tvertices count : " << pol.GetVerticesCount() << endl
+	   << "\tvertices count : " << pol.GetVerticesCount() << std::endl
 	   << "\tvertices :\n" ;
-	for ( Iter it = pol.m_vertices.Begin(); it != pol.m_vertices.End(); ++it )
+	for ( Container< Point >::ConstIterator it = pol.m_vertices.Begin(); it != pol.m_vertices.End(); ++it )
 	{		
 		os << "\t\t(" << ( *it ).X() << ", " << ( *it ).Y() << ")" ;
 
@@ -341,19 +318,19 @@ std::ostream & operator<<( std::ostream & os, Polyline const & pol )
 			os << " - End" ;
 		}
 
-		os << endl ;
+		os << std::endl ;
 	}
-	os << "\tlength : " << pol.GetLength() << endl ;
+	os << "\tlength : " << pol.GetLength() << std::endl ;
 	if ( pol.IsClosed() )
 	{
-		cout << "\tPolyline is closed.\n" ;
+		std::cout << "\tPolyline is closed.\n" ;
 	}
 	else
 	{
-		cout << "\tPolyline is not closed.\n" ;
+		std::cout << "\tPolyline is not closed.\n" ;
 	}
 
-	os << endl;
+	os << std::endl;
 
 	return os;
 }
@@ -411,12 +388,12 @@ double Polyline::GetLength() const
 	}
 
 	double length = 0;
-	Iter cur = m_vertices.Begin();
-	Iter next = m_vertices.Begin();
+	Container< Point >::ConstIterator cur = m_vertices.Begin();
+	Container< Point >::ConstIterator next = m_vertices.Begin();
 	++next;
 	while ( next != m_vertices.End() )
 	{
-		length += GetDistance( *cur, *next );
+		length += ShapesHelper::GetDistance( *cur, *next );
 
 		++cur;
 		++next;
@@ -427,7 +404,7 @@ double Polyline::GetLength() const
 
 void Polyline::PrintInfo() const
 {
-	cout << *this;
+	std::cout << *this;
 }
 
 Point const & Polyline::GetBegin() const
@@ -447,7 +424,7 @@ uint16_t Polyline::GetVerticesCount() const
 
 bool Polyline::VerticesContainPoint( Point const & p ) const
 {
-	for ( Iter it = m_vertices.Begin(); it != m_vertices.End(); ++it )
+	for ( Container< Point >::ConstIterator it = m_vertices.Begin(); it != m_vertices.End(); ++it )
 	{
 		if ( *it == p )
 		{
@@ -499,13 +476,11 @@ Polygon::Polygon( Container< Point > const & vertices )
 	}
 
 	m_vertices = vertices;
-	for ( Iter i = m_vertices.Begin(); i + 1 != m_vertices.End(); ++i )
+	for ( Container< Point >::ConstIterator i = m_vertices.Begin(); i + 1 != m_vertices.End(); ++i )
 	{
 		m_edges.PushBack( LineSegment( i.GetPointer(), ( i + 1 ).GetPointer() ) );
 	}
 	m_edges.PushBack( LineSegment( &m_vertices.GetFirst(), &m_vertices.GetLast() ) );
-
-	IncrementCount();
 }
 
 double Polygon::GetPerimeter() const
@@ -549,7 +524,7 @@ bool Polygon::IsTriangle() const
 
 bool Polygon::operator ==( Polygon const & other ) const
 {
-	return ( CircularShift( m_vertices, other.m_vertices ) || CircularShift( GetInvertedContainer( m_vertices ), other.m_vertices ) );
+	return ( ShapesHelper::IsCircularShift( m_vertices, other.m_vertices ) || ShapesHelper::IsCircularShift( ShapesHelper::GetInvertedContainer( m_vertices ), other.m_vertices ) );
 }
 
 uint16_t Polygon::GetRemainder( int a, uint16_t b )
@@ -583,9 +558,9 @@ Point const & Polygon::GetVertex( int index ) const
 
 bool Polygon::VerticesContainsEqualsPoints( Container< Point > const & vertices )
 {
-	for ( Iter it1 = vertices.Begin(); it1 != vertices.End(); ++it1 )
+	for ( Container< Point >::ConstIterator it1 = vertices.Begin(); it1 != vertices.End(); ++it1 )
 	{
-		for ( Iter it2 = it1 + 1; it2 != vertices.End(); ++it2 )
+		for ( Container< Point >::ConstIterator it2 = it1 + 1; it2 != vertices.End(); ++it2 )
 		{
 			if ( *it1 == *it2 )
 			{
@@ -611,58 +586,40 @@ bool Polygon::VerticesAreCollinear( Point const & p1, Point const & p2, Point co
 
 void Polygon::PrintInfo() const
 {
-	cout << *this;
+	std::cout << *this;
 }
 
 std::ostream & operator<<( std::ostream & os, Polygon const & pol )
 {
-	os << endl;
+	os << std::endl;
 
 	std::string const name = pol.GetName();
 
 	os << name << " :\n"
-	   << "\tvertices count : " << pol.GetVerticesCount() << endl
+	   << "\tvertices count : " << pol.GetVerticesCount() << std::endl
 	   << "\tvertices ( in order ):\n" ;
-	for ( Iter it = pol.m_vertices.Begin(); it != pol.m_vertices.End(); ++it )
+	for ( Container< Point >::ConstIterator it = pol.m_vertices.Begin(); it != pol.m_vertices.End(); ++it )
 	{
 		os << "\t\t(" << ( *it ).X() << ", " << ( *it ).Y() << ")\n" ;
 	}
-	os << "\tperimeter : " << pol.GetPerimeter() << endl ;
+	os << "\tperimeter : " << pol.GetPerimeter() << std::endl ;
 	if ( pol.IsConvex() )
 	{
 		if ( pol.IsTriangle() )
 		{
-			cout << "\tPolygon is triangle.\n" ;
+			std::cout << "\tPolygon is triangle.\n" ;
 		}
 		else
 		{
-			cout << "\tPolygon is convex.\n" ;
+			std::cout << "\tPolygon is convex.\n" ;
 		}
 	}
 	else
 	{
-		cout << "\tPolygon is not convex.\n" ;
+		std::cout << "\tPolygon is not convex.\n" ;
 	}
 
-	os << endl;
+	os << std::endl;
 
 	return os;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

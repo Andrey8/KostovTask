@@ -1,9 +1,9 @@
 #ifndef CONTAINER_H
 #define CONTAINER_H
 
-#include <cstdint>
-
 #include "exception.h"
+
+#include <cstdint>
 
 
 
@@ -23,6 +23,11 @@ private:
 		Node * m_next;
 	};
 public:
+	Container( Container const & );
+	Container();
+
+	~Container();
+
 	class ConstIterator
 	{
 	public:
@@ -58,11 +63,6 @@ public:
 	void Clear();
 
 	Container & operator=( Container const & );
-
-	Container( Container const & );
-	Container();
-
-	~Container();
 private:
 	Node * m_begin;
 	Node * m_end;

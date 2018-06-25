@@ -7,18 +7,18 @@
 
 // class ClosedInterval :
 
-ClosedInterval::ClosedInterval( double l, double h )
+ShapesHelper::ClosedInterval::ClosedInterval( double l, double h )
 {
 	if ( l > h )
 	{
-		throw Exception( "Invalid interval creation" );
+		throw Exception( "ShapesHelper::ClosedInterval creation : invalid values." );
 	}
 
 	m_lowValue = l;
 	m_highValue = h;
 }
 
-bool ClosedInterval::Contains( double value ) const
+bool ShapesHelper::ClosedInterval::Contains( double value ) const
 {
 	return ( m_lowValue <= value && value <= m_highValue );
 }
@@ -27,7 +27,7 @@ bool ClosedInterval::Contains( double value ) const
 
 // class Angle :
 
-Angle::Angle( double value, AngleMeasure measure )
+ShapesHelper::Angle::Angle( double value, AngleMeasure measure )
 {
 	switch ( measure )
 	{
@@ -43,14 +43,10 @@ Angle::Angle( double value, AngleMeasure measure )
 
 		break;
 	}
-	default :
-		throw Exception( "..." );
-
-		break;
 	}
 }
 
-bool Angle::IsInClosedInterval( double a1, double a2, AngleMeasure measure ) const
+bool ShapesHelper::Angle::IsInClosedInterval( double a1, double a2, AngleMeasure measure ) const
 {
 	switch ( measure )
 	{
@@ -62,14 +58,10 @@ bool Angle::IsInClosedInterval( double a1, double a2, AngleMeasure measure ) con
 	{
 		return ClosedInterval( a1, a2 ).Contains( GetDegrees() );
 	}
-	default :
-		throw Exception( "Method Angle::IsInClosedInterval : non existing angle measure." );
-
-		break;
 	}
 }
 
-double Angle::GetDegrees() const
+double ShapesHelper::Angle::GetDegrees() const
 {
 	return m_radians * 180 / M_PI;
 }
@@ -78,26 +70,26 @@ double Angle::GetDegrees() const
 
 // class Vector :
 
-Vector::Vector( double x, double y )
+ShapesHelper::Vector::Vector( double x, double y )
 	: m_x( x ),
 	  m_y( y )
 {
 	if ( x == 0 && y == 0 )
 	{
-		throw Exception( "Vector creation : null vector is impossible." );
+		throw Exception( "ShapesHelper::Vector creation : null vector is impossible." );
 	}
 }
 
-Vector::Vector( Point const & p1, Point const & p2 )
+ShapesHelper::Vector::Vector( Point const & p1, Point const & p2 )
 	: Vector( p2.X() - p1.X(), p2.Y() - p1.Y() )
 {}
 
-double Vector::GetNorm() const
+double ShapesHelper::Vector::GetNorm() const
 {
 	return sqrt( m_x * m_x + m_y * m_y );
 }
 
-Vector Vector::GetNormal( CircleDirection direction ) const
+ShapesHelper::Vector ShapesHelper::Vector::GetNormal( CircleDirection direction ) const
 {
 	switch ( direction )
 	{
@@ -109,19 +101,15 @@ Vector Vector::GetNormal( CircleDirection direction ) const
 	{
 		return Vector( -m_y, m_x );
 	}
-	default :
-		throw Exception( "..." );
-
-		break;
 	}
 }
 
-double Vector::operator *( Vector const & other ) const
+double ShapesHelper::Vector::operator *( Vector const & other ) const
 {
 	return ( m_x * other.m_x + m_y * other.m_y );
 }
 
-Angle Vector::GetRelativeAngle( Vector const & fixed, CircleDirection direction ) const
+ShapesHelper::Angle ShapesHelper::Vector::GetRelativeAngle( Vector const & fixed, CircleDirection direction ) const
 {
 	switch ( direction )
 	{
@@ -183,10 +171,6 @@ Angle Vector::GetRelativeAngle( Vector const & fixed, CircleDirection direction 
 			}
 		}
 	}
-	default :
-		throw Exception( "..." );
-
-		break;
 	}
 }
 
@@ -194,26 +178,26 @@ Angle Vector::GetRelativeAngle( Vector const & fixed, CircleDirection direction 
 
 // class LineSegment :
 
-LineSegment::LineSegment( Point const * p1, Point const * p2 )
+ShapesHelper::LineSegment::LineSegment( Point const * p1, Point const * p2 )
 	: m_p1( p1 ),
 	  m_p2( p2 )
 {
 	if ( !p1 || !p2 )
 	{
-		throw Exception( "LineSegment creation : invalid point." );
+		throw Exception( "ShapesHelper::LineSegment creation : invalid point." );
 	}
 
 	if ( *p1 == *p2 )
 	{
-		throw Exception( "LineSegment creation : equal points." );
+		throw Exception( "ShapesHelper::LineSegment creation : equal points." );
 	}
 }
 
-LineSegment::LineSegment( double x1, double y1, double x2, double y2 )
+ShapesHelper::LineSegment::LineSegment( double x1, double y1, double x2, double y2 )
 	: LineSegment( new Point( x1, y1 ), new Point( x2, y2 ) )
 {}
 
-bool LineSegment::Intersects( LineSegment const & other ) const
+bool ShapesHelper::LineSegment::Intersects( LineSegment const & other ) const
 {
 	if ( IntersectsLineOf( other ) && other.IntersectsLineOf( *this ) )
 	{
@@ -223,7 +207,7 @@ bool LineSegment::Intersects( LineSegment const & other ) const
 	return false;
 }
 
-bool LineSegment::IntersectsLineOf( LineSegment const & other ) const
+bool ShapesHelper::LineSegment::IntersectsLineOf( LineSegment const & other ) const
 {
 	Point const & p1 = *other.m_p1;
 	Point const & p2 = *other.m_p2;
@@ -253,7 +237,7 @@ bool LineSegment::IntersectsLineOf( LineSegment const & other ) const
 	}
 }
 
-double LineSegment::GetLength() const
+double ShapesHelper::LineSegment::GetLength() const
 {
 	return GetDistance( *m_p1, *m_p2 );
 }
@@ -270,14 +254,14 @@ void ShapesHelper::MoveLastItemToBegin( Container< Point > & points )
 {
 	if ( points.IsEmpty() )
 	{
-		throw Exception( "..." );
+		throw Exception( "ShapesHelper::MoveLastItemToBegin : empty container." );
 	}
 
 	points.PushFront( points.GetLast() );
 	points.RemoveLast();
 }
 
-bool ShapesHelper::CircularShift( Container< Point > const & c1, Container< Point > const & c2 )
+bool ShapesHelper::IsCircularShift( Container< Point > const & c1, Container< Point > const & c2 )
 {
 	if ( c1.GetSize() != c2.GetSize() )
 	{
@@ -364,38 +348,5 @@ Shape const * ShapesHelper::GetShape( ShapeType type )
 
 		return ( new Polygon( vertices ) );
 	}
-	default :
-		throw Exception( "Function ShapesHelper::GetShape : not existing shape type." );
-
-		break;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,26 +1,20 @@
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 
-#include <iostream>
 #include <string>
-
-using std::cout;
-using std::endl;
 
 
 
 class Exception
 {
 public:
-	virtual void ShowMessage() const
-	{
-		cout << endl << m_message << endl << endl ;
-	}
+	Exception( std::string const & message )
+		: m_message( message )
+	{}
 
-	Exception( std::string const & message ) { m_message = message; }
-	Exception() {}
+	std::string const & GetMessage() const { return m_message; }
 private:
-	std::string m_message;
+	std::string const m_message;
 };
 
 #endif // EXCEPTION_H

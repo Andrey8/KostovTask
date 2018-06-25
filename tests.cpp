@@ -6,9 +6,11 @@
 #include <string>
 #include <ctime>
 
+using Vector = ShapesHelper::Vector;
+using ShapeType = ShapesHelper::ShapeType;
+using CircleDirection = ShapesHelper::CircleDirection;
 using std::cout;
 using std::endl;
-using namespace ShapesHelper;
 
 
 
@@ -55,7 +57,7 @@ void Tests::SHOW_PointContainer( Container< Point > const & points )
 		return;
 	}
 
-	for ( Iter it = points.Begin(); it != points.End(); ++it )
+	for ( Container< Point >::ConstIterator it = points.Begin(); it != points.End(); ++it )
 	{
 		cout << "\t(" << ( *it ).X() << ", " << ( *it ).Y() << ")" ;
 	}
@@ -149,6 +151,7 @@ void Tests::TestContainer()
 	}
 
 	SKIP();
+
 	// RemoveFirst
 	cout << "RemoveFirst :\n " ;
 	{
@@ -176,7 +179,7 @@ void Tests::TestContainer()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 	}
 
@@ -209,7 +212,7 @@ void Tests::TestContainer()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 	}
 
@@ -251,7 +254,7 @@ void Tests::TestContainer()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 	}
 
@@ -277,7 +280,7 @@ void Tests::TestContainer()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 	}
 
@@ -415,7 +418,7 @@ void Tests::TestShapes()
 
 		Rect r2( Point( 2, 4 ), Point( 4, 1 ) );
 		cout << r2 ;
-		cout << "Top right corner : " << r2.GetTopRight() << endl ;
+		cout << "Top right corner : " << r2.GetTopRightCorner() << endl ;
 
 		cout << "All shapes count : " << Shape::GetCount() << endl << endl ;
 
@@ -425,7 +428,7 @@ void Tests::TestShapes()
 		}
 		catch( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 	}
 
@@ -461,7 +464,7 @@ void Tests::TestShapes()
 		}
 		catch( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 
 		cout << "All shapes count : " << Shape::GetCount() << endl << endl ;
@@ -496,7 +499,7 @@ void Tests::TestShapes()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 
 		Container< Point > goodVertices2;
@@ -512,7 +515,7 @@ void Tests::TestShapes()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 
 		Container< Point > goodVertices3;
@@ -535,7 +538,7 @@ void Tests::TestShapes()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 
 		Container< Point > badVertices2;
@@ -552,7 +555,7 @@ void Tests::TestShapes()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 
 		Container< Point > badVertices3;
@@ -569,7 +572,7 @@ void Tests::TestShapes()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 
 		Container< Point > q1;
@@ -584,7 +587,7 @@ void Tests::TestShapes()
 		}
 		catch ( Exception &exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 
 		Container< Point > q2;
@@ -599,7 +602,7 @@ void Tests::TestShapes()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 
 		Container< Point > badQ1;
@@ -614,7 +617,7 @@ void Tests::TestShapes()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 
 		Container< Point > manyPoints;
@@ -635,7 +638,7 @@ void Tests::TestShapes()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 
 		cout << "All shapes count : " << Shape::GetCount() << endl << endl ;
@@ -671,7 +674,7 @@ void Tests::TestShapesHelper()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 	}
 
@@ -689,11 +692,11 @@ void Tests::TestShapesHelper()
 			points.PushBack( Point( 7, 8 ) );
 			points.PushBack( Point( 9, 10 ) );
 			SHOW_PointContainer( points );
-			SHOW_PointContainer( GetInvertedContainer( points ) );
+			SHOW_PointContainer( ShapesHelper::GetInvertedContainer( points ) );
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 	}
 }
@@ -704,9 +707,9 @@ void Tests::KostovTest()
 {
 	srand( time( 0 ) );
 
-	cout << "KOSTOV TEST :\n\n" ;	
+	std::cout << "KOSTOV TEST :\n\n" ;
 
-	int shapesCount = 20;
+	int const shapesCount = 20;
 	Container< Shape const * > shapes;
 
 	while ( shapes.GetSize() < shapesCount )
@@ -719,11 +722,11 @@ void Tests::KostovTest()
 		}
 		catch ( Exception & exc )
 		{
-			exc.ShowMessage();
+			std::cout << exc.GetMessage() << std::endl ;
 		}
 	}
 
-	cout << "\nAll shapes count : " << Shape::GetCount() << endl << endl ;
+	std::cout << "\nAll shapes count : " << Shape::GetCount() << std::endl << std::endl ;
 
 	for ( Container< Shape const * >::ConstIterator it = shapes.Begin(); it != shapes.End(); ++it )
 	{
@@ -735,7 +738,7 @@ void Tests::KostovTest()
 		delete ( *it );
 	}
 
-	cout << "All shapes count after destroying : " << Shape::GetCount() << endl ;
+	std::cout << "All shapes count after destroying : " << Shape::GetCount() << std::endl ;
 }
 
 
